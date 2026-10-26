@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StudyBoard — Student Task Manager</title>
+  <meta name="description" content="A premium student task manager to organize assignments, track subjects, and monitor your GPA — all in one place." />
+  <link rel="stylesheet" href="css/style.css" />
+</head>
+<body>
+
+  <!-- Background Orbs -->
+  <div class="bg-orb bg-orb-1"></div>
+  <div class="bg-orb bg-orb-2"></div>
+
+  <div id="app">
+    <!-- ── Header ────────────────────────────────────────── -->
+    <header>
+      <a href="#" class="logo" id="logo-link">
+        <div class="logo-icon">🎓</div>
+        <span>StudyBoard</span>
+      </a>
+
+      <nav class="main-nav" id="main-nav" role="navigation" aria-label="Main Navigation">
+        <button class="active" data-page="dashboard" id="nav-dashboard" aria-label="Dashboard">
+          <span>🏠</span><span>Dashboard</span>
+        </button>
+        <button data-page="tasks" id="nav-tasks" aria-label="Tasks">
+          <span>📋</span><span>Tasks</span>
+        </button>
+        <button data-page="subjects" id="nav-subjects" aria-label="Subjects">
+          <span>📚</span><span>Subjects</span>
+        </button>
+        <button data-page="grades" id="nav-grades" aria-label="Grades">
+          <span>🏆</span><span>Grades</span>
+        </button>
+      </nav>
+
+      <div class="header-actions">
+        <button class="theme-toggle" id="theme-toggle" title="Toggle Dark/Light Mode" aria-label="Toggle theme"></button>
+      </div>
+    </header>
+
+    <!-- ── Main Content ────────────────────────────────── -->
+    <main>
+
+      <!-- ═══ DASHBOARD ════════════════════════════════════ -->
+      <section class="page active" id="page-dashboard">
+        <div class="section-header">
+          <div>
+            <h2>Welcome Back 👋</h2>
+            <p class="text-muted mt-1" id="dashboard-date"></p>
+          </div>
+          <button class="btn btn-primary" id="dash-add-task">
+            <span>＋</span> New Task
+          </button>
+        </div>
+
+        <div class="stats-grid">
+          <div class="stat-card accent">
+            <span class="stat-icon">📋</span>
+            <div class="stat-value" id="stat-total">0</div>
+            <div class="stat-label">Total Tasks</div>
+          </div>
+          <div class="stat-card orange">
+            <span class="stat-icon">⏰</span>
+            <div class="stat-value" id="stat-due-today">0</div>
+            <div class="stat-label">Due Today</div>
+          </div>
+          <div class="stat-card green">
+            <span class="stat-icon">✅</span>
+            <div class="stat-value" id="stat-done">0</div>
+            <div class="stat-label">Completed</div>
+          </div>
+          <div class="stat-card cyan">
+            <span class="stat-icon">🎯</span>
+            <div class="stat-value" id="stat-gpa">—</div>
+            <div class="stat-label">Current GPA</div>
+          </div>
+        </div>
+
+        <!-- Progress Bar -->
+        <div class="card mt-2">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:0.5rem;">
+            <span style="font-weight:600;font-size:0.95rem;">Overall Progress</span>
+            <span class="text-muted" id="progress-pct">0%</span>
+          </div>
+          <div class="progress-bar-wrap">
+            <div class="progress-bar-fill" id="progress-bar" style="width:0%"></div>
+          </div>
+        </div>
+
+        <!-- Upcoming Tasks -->
+        <div class="mt-3">
+          <div class="section-header" style="margin-bottom:1rem;">
+            <h2 style="font-size:1.2rem;">Upcoming Deadlines</h2>
+          </div>
+          <div class="recent-tasks" id="upcoming-tasks">
+            <div class="empty-state">
+              <span class="empty-icon">📭</span>
+              <p>No upcoming tasks.<br>Add some tasks to get started!</p>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ TASKS ════════════════════════════════════════ -->
+      <section class="page" id="page-tasks">
+        <div class="section-header">
+          <h2>My Tasks</h2>
+          <button class="btn btn-primary" id="tasks-add-btn">
+            <span>＋</span> New Task
+          </button>
+        </div>
+
+        <!-- Filter Bar -->
+        <div class="filter-bar">
+          <input type="text" id="task-search" placeholder="🔍  Search tasks..." />
+          <select id="filter-subject">
+            <option value="">All Subjects</option>
+          </select>
+          <select id="filter-priority">
+            <option value="">All Priorities</option>
+            <option value="critical">🔴 Critical</option>
+            <option value="high">🟠 High</option>
+            <option value="medium">🟡 Medium</option>
+            <option value="low">🔵 Low</option>
+          </select>
+        </div>
+
+        <!-- Kanban Board -->
+        <div class="kanban-board">
+          <!-- To Do -->
+          <div class="kanban-col" id="col-todo">
+            <div class="kanban-col-header">
+              <div class="kanban-col-title">
+                <div class="col-dot todo"></div>
+                To Do
+              </div>
+              <span class="col-count" id="count-todo">0</span>
+            </div>
+            <div class="task-list" id="list-todo"></div>
+          </div>
+
+          <!-- In Progress -->
+          <div class="kanban-col" id="col-progress">
+            <div class="kanban-col-header">
+              <div class="kanban-col-title">
+                <div class="col-dot progress"></div>
+                In Progress
+              </div>
+              <span class="col-count" id="count-progress">0</span>
+            </div>
+            <div class="task-list" id="list-progress"></div>
+          </div>
+
+          <!-- Done -->
+          <div class="kanban-col" id="col-done">
+            <div class="kanban-col-header">
+              <div class="kanban-col-title">
+                <div class="col-dot done"></div>
+                Done
+              </div>
+              <span class="col-count" id="count-done">0</span>
+            </div>
+            <div class="task-list" id="list-done"></div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ═══ SUBJECTS ════════════════════════════════════ -->
+      <section class="page" id="page-subjects">
+        <div class="section-header">
+          <h2>My Subjects</h2>
+          <button class="btn btn-primary" id="subjects-add-btn">
+            <span>＋</span> Add Subject
+          </button>
+        </div>
+        <div class="subjects-grid" id="subjects-grid">
+          <!-- populated by JS -->
+        </div>
+      </section>
+
+      <!-- ═══ GRADES ════════════════════════════════════════ -->
+      <section class="page" id="page-grades">
+        <div class="section-header">
+          <h2>Grade Tracker</h2>
+          <button class="btn btn-primary" id="grades-add-btn">
+            <span>＋</span> Add Grade
+          </button>
+        </div>
+
+        <!-- GPA Hero -->
+        <div class="gpa-hero" id="gpa-hero">
+          <div class="gpa-value" id="gpa-display">—</div>
+          <div class="gpa-label">Cumulative GPA (4.0 Scale)</div>
+          <div class="gpa-letter" id="gpa-letter-display">N/A</div>
+        </div>
+
+        <!-- Grades Table -->
+        <div class="grades-table-wrapper">
+          <table class="grades-table">
+            <thead>
+              <tr>
+                <th>Subject</th>
+                <th>Assignment / Exam</th>
+                <th>Score</th>
+                <th>Letter</th>
+                <th>GPA Points</th>
+                <th>Date</th>
+                <th></th>
+              </tr>
+            </thead>
+            <tbody id="grades-tbody">
+              <tr>
+                <td colspan="7">
+                  <div class="empty-state">
+                    <span class="empty-icon">🏆</span>
+                    <p>No grades yet.<br>Add your first grade to track your GPA.</p>
+                  </div>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <!-- ═══ MODAL: Add/Edit Task ════════════════════════════ -->
+  <div class="modal-overlay" id="task-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="task-modal-title">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="task-modal-title">New Task</h3>
+        <button class="modal-close" id="task-modal-close" aria-label="Close">✕</button>
+      </div>
+      <form id="task-form">
+        <div class="form-group">
+          <label class="form-label" for="task-title-input">Title *</label>
+          <input class="form-input" type="text" id="task-title-input" placeholder="e.g. Math Assignment Chapter 5" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="task-desc-input">Description</label>
+          <textarea class="form-textarea" id="task-desc-input" placeholder="Describe the task..."></textarea>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="task-subject-input">Subject</label>
+            <select class="form-select" id="task-subject-input">
+              <option value="">No Subject</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="task-priority-input">Priority</label>
+            <select class="form-select" id="task-priority-input">
+              <option value="low">Low</option>
+              <option value="medium" selected>Medium</option>
+              <option value="high">High</option>
+              <option value="critical">Critical</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="task-due-input">Due Date</label>
+            <input class="form-input" type="date" id="task-due-input" />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="task-status-input">Status</label>
+            <select class="form-select" id="task-status-input">
+              <option value="todo">To Do</option>
+              <option value="progress">In Progress</option>
+              <option value="done">Done</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-footer">
+          <button type="button" class="btn btn-ghost" id="task-cancel-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="task-submit-btn">Create Task</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ═══ MODAL: Add/Edit Subject ═══════════════════════ -->
+  <div class="modal-overlay" id="subject-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="subject-modal-title">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="subject-modal-title">New Subject</h3>
+        <button class="modal-close" id="subject-modal-close" aria-label="Close">✕</button>
+      </div>
+      <form id="subject-form">
+        <div class="form-group">
+          <label class="form-label" for="subject-name-input">Subject Name *</label>
+          <input class="form-input" type="text" id="subject-name-input" placeholder="e.g. Mathematics" required />
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="subject-icon-input">Emoji Icon</label>
+          <input class="form-input" type="text" id="subject-icon-input" placeholder="📘" maxlength="4" value="📘" />
+        </div>
+        <div class="form-group">
+          <label class="form-label">Color</label>
+          <div class="color-picker-row" id="color-picker-row">
+            <!-- colors populated by JS -->
+          </div>
+        </div>
+        <div class="form-footer">
+          <button type="button" class="btn btn-ghost" id="subject-cancel-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary" id="subject-submit-btn">Add Subject</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ═══ MODAL: Add Grade ═══════════════════════════════ -->
+  <div class="modal-overlay" id="grade-modal-overlay" role="dialog" aria-modal="true" aria-labelledby="grade-modal-title">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 class="modal-title" id="grade-modal-title">Add Grade</h3>
+        <button class="modal-close" id="grade-modal-close" aria-label="Close">✕</button>
+      </div>
+      <form id="grade-form">
+        <div class="form-group">
+          <label class="form-label" for="grade-subject-input">Subject *</label>
+          <select class="form-select" id="grade-subject-input" required>
+            <option value="">— Select Subject —</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="grade-name-input">Assignment / Exam Name *</label>
+          <input class="form-input" type="text" id="grade-name-input" placeholder="e.g. Midterm Exam" required />
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="grade-score-input">Score (0–100) *</label>
+            <input class="form-input" type="number" id="grade-score-input" min="0" max="100" placeholder="85" required />
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="grade-date-input">Date</label>
+            <input class="form-input" type="date" id="grade-date-input" />
+          </div>
+        </div>
+        <div class="form-footer">
+          <button type="button" class="btn btn-ghost" id="grade-cancel-btn">Cancel</button>
+          <button type="submit" class="btn btn-primary">Add Grade</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- JS Modules -->
+  <script src="js/app.js" type="module"></script>
+</body>
+</html>
